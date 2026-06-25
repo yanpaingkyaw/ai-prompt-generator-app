@@ -59,5 +59,13 @@ function getClientErrorMessage(errorMessage: string) {
     return "The selected AI model is not available for this provider. Please update OPENAI_MODEL in .env.";
   }
 
+  if (
+    errorMessage.includes("requires more credits") ||
+    errorMessage.includes("can only afford") ||
+    errorMessage.includes("402")
+  ) {
+    return "The AI provider rejected the request because of credits or token limits. Try adding credits or using a cheaper model.";
+  }
+
   return "Unable to generate the prompt right now. Please try again.";
 }
