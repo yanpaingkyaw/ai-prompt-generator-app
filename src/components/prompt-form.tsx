@@ -110,115 +110,137 @@ export function PromptForm() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
       <form
         onSubmit={handleSubmit}
-        className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+        className="min-w-0 overflow-hidden rounded-lg border border-[#e4e0d9] bg-white shadow-[0_22px_48px_rgba(47,52,55,0.1)]"
       >
-        <div>
-          <label
-            htmlFor="inputMyanmar"
-            className="text-sm font-semibold text-slate-900"
+        <div className="flex items-start justify-between gap-4 border-b border-[#e4e0d9] px-5 py-5">
+          <div>
+            <h2 className="text-2xl font-bold text-[#2f3437]">Your idea</h2>
+            <p className="mt-1 text-sm leading-6 text-[#6f6f6f]">
+              Write naturally in Myanmar/Burmese.
+            </p>
+          </div>
+          <span
+            className={`shrink-0 rounded-full border px-3 py-2 font-mono text-xs font-bold ${
+              characterCount > 2500
+                ? "border-[#dfabab] bg-[#f4eeee] text-[#a54848]"
+                : "border-[#dbe6d8] bg-[#edf3ec] text-[#2f6f4f]"
+            }`}
           >
-            Your idea in Myanmar/Burmese
-          </label>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            မြန်မာလို သင်လိုချင်တာကို ရိုးရိုးရှင်းရှင်းရေးပါ။
-          </p>
-          <textarea
-            id="inputMyanmar"
-            value={inputMyanmar}
-            onChange={(event) => setInputMyanmar(event.target.value)}
-            placeholder={exampleRequest}
-            rows={9}
-            className="mt-3 w-full rounded-md border border-slate-300 bg-white px-4 py-3 leading-7 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
-          />
-          <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-500">
+            {characterCount} / 2500
+          </span>
+        </div>
+
+        <div className="min-w-0 p-5">
+          <div>
+            <label
+              htmlFor="inputMyanmar"
+              className="text-sm font-bold text-[#2f3437]"
+            >
+              Your idea in Myanmar/Burmese
+            </label>
+            <p className="mt-1 text-sm leading-6 text-[#787774]">
+              မြန်မာလို သင်လိုချင်တာကို ရိုးရိုးရှင်းရှင်းရေးပါ။
+            </p>
+            <textarea
+              id="inputMyanmar"
+              value={inputMyanmar}
+              onChange={(event) => setInputMyanmar(event.target.value)}
+              placeholder={exampleRequest}
+              rows={9}
+              className="mt-3 w-full min-w-0 rounded-md border border-[#e4e0d9] bg-white px-4 py-3 leading-7 text-[#2f3437] outline-none transition placeholder:text-[#8f8d89] focus:border-[#337ea9] focus:ring-4 focus:ring-[#337ea9]/10"
+            />
+            <div className="mt-2 flex flex-col gap-2 text-xs text-[#6f6f6f] sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+              <button
+                type="button"
+                onClick={() => setInputMyanmar(exampleRequest)}
+                className="font-bold text-[#337ea9] transition hover:text-[#2b6688]"
+              >
+                Use example
+              </button>
+              <span>Better prompt needs goal, audience, and tone</span>
+            </div>
+          </div>
+
+          <div className="mt-6 grid min-w-0 gap-4 sm:grid-cols-2">
+            <SelectField
+              id="category"
+              label="Prompt category"
+              value={category}
+              onChange={(value) => setCategory(value as PromptCategory)}
+              options={promptCategories.map((value) => ({
+                value,
+                label: categoryLabels[value],
+              }))}
+            />
+            <SelectField
+              id="targetTool"
+              label="Target AI"
+              value={targetTool}
+              onChange={(value) => setTargetTool(value as TargetTool)}
+              options={targetTools.map((value) => ({
+                value,
+                label: targetToolLabels[value],
+              }))}
+            />
+            <SelectField
+              id="tone"
+              label="Tone"
+              value={tone}
+              onChange={(value) => setTone(value as PromptTone)}
+              options={promptTones.map((value) => ({
+                value,
+                label: toneLabels[value],
+              }))}
+            />
+            <SelectField
+              id="detailLevel"
+              label="Detail level"
+              value={detailLevel}
+              onChange={(value) => setDetailLevel(value as DetailLevel)}
+              options={(["short", "balanced", "detailed"] as DetailLevel[]).map(
+                (value) => ({
+                  value,
+                  label: detailLevelLabels[value],
+                }),
+              )}
+            />
+          </div>
+
+          {error ? (
+            <div className="mt-5 rounded-lg border border-[#dfabab] bg-[#f4eeee] p-4 text-sm leading-6 text-[#8f3d3d]">
+              {error}
+            </div>
+          ) : null}
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="rounded-md bg-[#337ea9] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#2b6688] disabled:cursor-not-allowed disabled:bg-[#d8d6d1] disabled:text-[#787774]"
+            >
+              {isLoading ? "Generating..." : "Generate prompt"}
+            </button>
             <button
               type="button"
-              onClick={() => setInputMyanmar(exampleRequest)}
-              className="font-semibold text-emerald-700 hover:text-emerald-800"
+              onClick={resetForm}
+              className="rounded-md border border-[#e4e0d9] bg-white px-5 py-3 text-sm font-bold text-[#2f3437] transition hover:bg-[#f7f6f3]"
             >
-              Use example
+              Reset
             </button>
-            <span>{characterCount}/2500</span>
           </div>
-        </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <SelectField
-            id="category"
-            label="Prompt category"
-            value={category}
-            onChange={(value) => setCategory(value as PromptCategory)}
-            options={promptCategories.map((value) => ({
-              value,
-              label: categoryLabels[value],
-            }))}
-          />
-          <SelectField
-            id="targetTool"
-            label="Target AI"
-            value={targetTool}
-            onChange={(value) => setTargetTool(value as TargetTool)}
-            options={targetTools.map((value) => ({
-              value,
-              label: targetToolLabels[value],
-            }))}
-          />
-          <SelectField
-            id="tone"
-            label="Tone"
-            value={tone}
-            onChange={(value) => setTone(value as PromptTone)}
-            options={promptTones.map((value) => ({
-              value,
-              label: toneLabels[value],
-            }))}
-          />
-          <SelectField
-            id="detailLevel"
-            label="Detail level"
-            value={detailLevel}
-            onChange={(value) => setDetailLevel(value as DetailLevel)}
-            options={(["short", "balanced", "detailed"] as DetailLevel[]).map(
-              (value) => ({
-                value,
-                label: detailLevelLabels[value],
-              }),
-            )}
-          />
-        </div>
-
-        {error ? (
-          <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-            {error}
+          <div className="mt-6 rounded-lg border border-[#e4e0d9] bg-[#f1f1ef] p-4 text-sm leading-6 text-[#5f5e5b]">
+            <p>
+              <span className="font-bold text-[#2f3437]">
+                Good input includes:
+              </span>{" "}
+              goal, audience, topic, preferred style, and what output you want
+              from the AI.
+            </p>
           </div>
-        ) : null}
-
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-          >
-            {isLoading ? "Generating..." : "Generate prompt"}
-          </button>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
-          >
-            Reset
-          </button>
-        </div>
-
-        <div className="mt-6 rounded-lg bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-          <p className="font-semibold text-slate-800">Good input includes:</p>
-          <p className="mt-1">
-            Goal, audience, topic, preferred style, and what output you want
-            from the AI.
-          </p>
         </div>
       </form>
 
@@ -244,14 +266,14 @@ function SelectField({
 }: SelectFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-slate-900">
+      <label htmlFor={id} className="text-sm font-bold text-[#2f3437]">
         {label}
       </label>
       <select
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-3 text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+        className="mt-2 w-full max-w-full rounded-md border border-[#e4e0d9] bg-white px-3 py-3 text-[#2f3437] outline-none transition focus:border-[#337ea9] focus:ring-4 focus:ring-[#337ea9]/10"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
